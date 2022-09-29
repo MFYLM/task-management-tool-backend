@@ -4,20 +4,16 @@ const Users = express.Router();
 const dbo = require("../db/conn");
 
 
-Users.route("/users/login").get((req, res) => {
+Users.route("/users/login").post(async (req, res) => {
     let db_connect = dbo.getDb();
 
-    const query = { 
+    const query = {
         username: req.body.usename,
         password: req.body.password
     };
 
-    db_connect.collection("Users").find(query).toArray((err, result) => {
-        if (err) throw err;
-        res.json(result);
-    });
-
-
+    const result = await db_connect.collection("Users").find(query).toArray();
+    res.json(result);
 });
 
 
