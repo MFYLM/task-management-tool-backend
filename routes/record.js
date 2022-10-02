@@ -6,11 +6,24 @@ const ObjectId = require("mongodb").ObjectId;
 
 
 // get all records
-recordRoutes.route("/record").get(function (req, res) {
+recordRoutes.route("/record").post(function (req, res) {
     let db_connect = dbo.getDb();
+    let email = req.body.email;
+
     db_connect.collection("ProjectList").find({}).toArray(function (err, result) {
         if (err) throw err;
-        res.json(result);
+        const projectArray = [];
+
+        for (let i = 0; i < result.length; ++i) {
+            for (let j = 0; j < result[i].collaborators.length; ++j) {
+
+                if (result[i].collaborators[j].email === email) {
+                    projectArray.push(result[i]);
+                }
+            }
+        }
+
+        res.json(projectArray);
     });
 });
 
